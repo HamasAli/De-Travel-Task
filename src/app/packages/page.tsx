@@ -1,244 +1,191 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { config, TourPackage } from "@/config";
-import TourCard from "@/components/tours/TourCard";
-import BookingModal from "@/components/tours/BookingModal";
-import { 
-  Search, 
-  Compass,
+import {
+  CheckCircle2,
+  ChevronDown,
+  ArrowRight,
+  MessageCircle,
+  Plane,
+  Hotel
 } from "lucide-react";
-
-function PackagesContent() {
-  const searchParams = useSearchParams();
-  const initialDest = searchParams.get("dest") || "";
-  const initialCat = searchParams.get("cat") || "all";
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(initialCat);
-  const [selectedDest, setSelectedDest] = useState(initialDest);
-  const [sortBy, setSortBy] = useState<"featured" | "duration-desc" | "duration-asc">("featured");
-  const [selectedTourForBooking, setSelectedTourForBooking] = useState<TourPackage | null>(null);
-
-  useEffect(() => {
-    if (initialCat) setSelectedCategory(initialCat);
-    if (initialDest) setSelectedDest(initialDest);
-  }, [initialCat, initialDest]);
-
-  // Filtering
-  const filteredTours = config.tours.filter((tour) => {
-    const matchesSearch = 
-      tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tour.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tour.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    const matchesCategory = 
-      selectedCategory === "all" || tour.category === selectedCategory;
-
-    const matchesDest = 
-      !selectedDest || tour.destination.toLowerCase().includes(selectedDest.toLowerCase());
-
-    return matchesSearch && matchesCategory && matchesDest;
-  });
-
-  // Sorting
-  const sortedTours = [...filteredTours].sort((a, b) => {
-    if (sortBy === "duration-desc") return b.days - a.days;
-    if (sortBy === "duration-asc") return a.days - b.days;
-    return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-  });
-
-  return (
-    <div className="bg-[#f8fafc] min-h-screen pt-24 sm:pt-28 pb-20 sm:pb-24">
-      {/* Page Header */}
-      <div className="bg-slate-900 text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden mb-8 sm:mb-12 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
-            All Upcoming Royal Expeditions
-          </h1>
-          <p className="text-slate-300 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Browse our scheduled group road departures, weekend getaways, and alpine trekking expeditions across Pakistan.
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Controls & Filter Bar */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/90 mb-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-center">
-            {/* Live Search Input */}
-            <div className="md:col-span-5 relative">
-              <input
-                type="text"
-                placeholder="Search by tour title, valley, or landmark..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-3 sm:py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-brand-primary focus:ring-2 focus:ring-[var(--brand-primary)]/20 text-base sm:text-sm font-medium text-slate-800"
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 sm:top-3" />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-3.5 sm:top-3 text-slate-400 hover:text-slate-600 text-xs font-bold w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center"
-                  aria-label="Clear search"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Destination Dropdown */}
-            <div className="md:col-span-4 relative">
-              <select
-                value={selectedDest}
-                onChange={(e) => setSelectedDest(e.target.value)}
-                aria-label="Filter by destination"
-                className="w-full px-4 py-3 sm:py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-brand-primary text-base sm:text-sm font-semibold text-slate-800 cursor-pointer"
-              >
-                <option value="">All Mountain Destinations</option>
-                <option value="Skardu">Skardu, Shangrila &amp; Deosai</option>
-                <option value="Hunza">Hunza Valley &amp; Passu Cones</option>
-                <option value="Fairy Meadows">Fairy Meadows &amp; Nanga Parbat</option>
-                <option value="Swat">Swat Valley &amp; Malam Jabba</option>
-                <option value="Naran">Naran, Kaghan &amp; Shogran</option>
-                <option value="Kashmir">Azad Kashmir &amp; Neelum Valley</option>
-                <option value="Kumrat">Kumrat Valley &amp; Katora Lake</option>
-              </select>
-            </div>
-
-            {/* Sort By Dropdown */}
-            <div className="md:col-span-3 relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                aria-label="Sort tours"
-                className="w-full px-4 py-3 sm:py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-brand-primary text-base sm:text-sm font-semibold text-slate-800 cursor-pointer"
-              >
-                <option value="featured">Sort: Featured First</option>
-                <option value="duration-desc">Duration: Longest (8-4 Days)</option>
-                <option value="duration-asc">Duration: Shortest (3-5 Days)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-100 hide-scrollbar py-1">
-            {[
-              { id: "all", label: "All Tours", count: config.tours.length },
-              { id: "group", label: "Group Expeditions", count: config.tours.filter(t => t.category === "group").length },
-              { id: "weekend", label: "Weekend Escapes", count: config.tours.filter(t => t.category === "weekend").length },
-              { id: "trekking", label: "Alpine Treks", count: config.tours.filter(t => t.category === "trekking").length },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedCategory(tab.id)}
-                className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold tracking-wide uppercase transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 active:scale-95 ${
-                  selectedCategory === tab.id
-                    ? "bg-[var(--brand-primary)] text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <span>{tab.label}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCategory === tab.id
-                    ? "bg-white/20 text-white"
-                    : "bg-white text-slate-600 border border-slate-200"
-                }`}>
-                  {tab.count}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Active Filters Chips & Count */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              Showing <strong className="text-slate-900">{sortedTours.length}</strong> {sortedTours.length === 1 ? "tour package" : "tour packages"}
-            </span>
-
-            {/* Active filter pills */}
-            {selectedCategory !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--brand-primary-light)] text-[var(--brand-primary-dark)] text-xs font-bold">
-                <span>Type: {selectedCategory}</span>
-                <button onClick={() => setSelectedCategory("all")} className="hover:opacity-75 font-black">✕</button>
-              </span>
-            )}
-            {selectedDest && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--brand-primary-light)] text-[var(--brand-primary-dark)] text-xs font-bold">
-                <span>Dest: {selectedDest}</span>
-                <button onClick={() => setSelectedDest("")} className="hover:opacity-75 font-black">✕</button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--brand-primary-light)] text-[var(--brand-primary-dark)] text-xs font-bold">
-                <span>&ldquo;{searchQuery}&rdquo;</span>
-                <button onClick={() => setSearchQuery("")} className="hover:opacity-75 font-black">✕</button>
-              </span>
-            )}
-          </div>
-
-          {(searchQuery || selectedDest || selectedCategory !== "all") && (
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedDest("");
-                setSelectedCategory("all");
-              }}
-              className="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1"
-            >
-              <span>Reset All Filters</span>
-            </button>
-          )}
-        </div>
-
-        {sortedTours.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {sortedTours.map((tour) => (
-              <TourCard
-                key={tour.id}
-                tour={tour}
-                onBookNow={(t) => setSelectedTourForBooking(t)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl p-10 sm:p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto">
-            <Compass className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-800 mb-2">No matching tours found</h3>
-            <p className="text-xs sm:text-sm text-slate-500 mb-6">
-              Try changing your search term or filter settings, or craft a custom trip according to your schedule.
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedDest("");
-                setSelectedCategory("all");
-              }}
-              className="btn-brand-primary px-6 py-2.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider"
-            >
-              Reset All Filters
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Booking Modal */}
-      <BookingModal
-        tour={selectedTourForBooking}
-        isOpen={!!selectedTourForBooking}
-        onClose={() => setSelectedTourForBooking(null)}
-      />
-    </div>
-  );
-}
+import TravelInquiryModal, { TravelInquiryData } from "@/components/common/TravelInquiryModal";
 
 export default function PackagesPage() {
+  const [expandedPackageId, setExpandedPackageId] = useState<string | null>(null);
+  const [inquiryModalData, setInquiryModalData] = useState<TravelInquiryData | null>(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedPackageId(expandedPackageId === id ? null : id);
+  };
+
+  const handleGetQuote = (pkg: TourPackage) => {
+    setInquiryModalData({
+      serviceType: "Package",
+      title: `${pkg.flag} ${pkg.title}`,
+      details: `${pkg.duration} | Custom Quote on Request`,
+    });
+  };
+
   return (
-    <Suspense fallback={<div className="min-h-screen pt-32 text-center text-slate-600">Loading tours catalog...</div>}>
-      <PackagesContent />
-    </Suspense>
+    <div className="flex flex-col min-h-screen bg-[#f8fafc] pt-24 sm:pt-28">
+      {/* Hero */}
+      <section className="relative bg-slate-950 text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/travel_package.jpg"
+            alt="International Holiday Packages"
+            fill
+            priority
+            className="object-cover object-center opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-900/60 to-slate-950/90" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight mb-3">
+            Hajj, Umrah &amp; International Tours
+          </h1>
+
+          <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-2xl mx-auto mb-6 leading-relaxed">
+            Explore top worldwide destinations (Dubai, Turkey, Thailand, Malaysia) — transport, hotels, transfers, and sightseeing arranged end-to-end.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-300">
+            <span>Flexible Group &amp; Family Options</span>
+            <span>•</span>
+            <span>Helpline: <strong>{config.phone}</strong></span>
+          </div>
+        </div>
+      </section>
+
+      {/* Packages Grid */}
+      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            Explore Pakistan &amp; Worldwide Tours
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {config.tourPackages.map((pkg) => {
+            const isExpanded = expandedPackageId === pkg.id;
+            return (
+              <div
+                key={pkg.id}
+                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-2xl">{pkg.flag}</span>
+                    <span className="text-[10px] font-bold uppercase text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                      {pkg.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {pkg.title}
+                  </h3>
+                  <span className="text-xs text-slate-500 font-medium block mt-0.5">
+                    {pkg.destination}, {pkg.country}
+                  </span>
+
+                  <p className="text-xs text-slate-600 leading-relaxed mt-2">
+                    {pkg.overview}
+                  </p>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+                    <div>Duration: <strong>{pkg.duration}</strong></div>
+                    <div className="text-brand-primary font-bold">Price on Request</div>
+                  </div>
+
+                  {/* Expandable Inclusions */}
+                  <div className="mt-3 pt-2.5 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => toggleExpand(pkg.id)}
+                      className="text-xs font-bold text-slate-700 hover:text-brand-primary flex items-center justify-between w-full py-1"
+                    >
+                      <span>{isExpanded ? "Hide Inclusions" : "View Inclusions"}</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="mt-2 space-y-1.5 text-xs text-slate-600 pt-1">
+                        {pkg.inclusions.map((inc, i) => (
+                          <div key={i} className="flex items-start gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-brand-primary shrink-0 mt-0.5" />
+                            <span>{inc}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-4 mt-3 border-t border-slate-100 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => handleGetQuote(pkg)}
+                    className="w-full btn-brand-primary py-2.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1 shadow-sm"
+                  >
+                    <span>Get Quote</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                  <a
+                    href={`https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(`Hello, I want to inquire about the ${pkg.title}`)}`}
+                    target="_blank"
+                    className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1 transition-colors"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-brand-primary" />
+                    <span>WhatsApp Inquiry</span>
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Flight & Hotel Booking CTA */}
+      <section className="py-14 bg-slate-900 text-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight mb-2">
+            Only Need a Flight or Hotel?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mb-6">
+            We also handle standalone flight ticketing and hotel reservations, without a full holiday package.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/contact"
+              className="btn-brand-primary px-6 py-3 rounded-xl text-white font-bold text-xs uppercase tracking-wider shadow-sm flex items-center gap-2"
+            >
+              <Plane className="w-4 h-4" />
+              <span>Book a Flight</span>
+            </Link>
+            <Link
+              href="/contact"
+              className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-colors border border-slate-700"
+            >
+              <Hotel className="w-4 h-4" />
+              <span>Book a Hotel</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Inquiry Modal */}
+      {inquiryModalData && (
+        <TravelInquiryModal
+          isOpen={true}
+          initialData={inquiryModalData}
+          onClose={() => setInquiryModalData(null)}
+        />
+      )}
+    </div>
   );
 }

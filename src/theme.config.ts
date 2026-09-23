@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- * 🎨 CENTRAL THEME & COLOR SYSTEM FOR DE TRAVEL TASK
+ * 🎨 CENTRAL THEME & COLOR SYSTEM FOR Elite One Travels
  * =====================================================================
  * 
  * To change the website's entire color palette:
@@ -84,7 +84,7 @@ export const themePresets: Record<string, ColorPalette> = {
 
   // Preset 2: Ocean Azure & Sunset Gold
   ocean: {
-    name: "De Travel Task Blue & Green",
+    name: "Paradise Ocean Azure & Sunset Gold",
     primary: {
       DEFAULT: "#0284c7",      // Sky / Ocean Blue
       hover: "#0369a1",

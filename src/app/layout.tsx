@@ -21,10 +21,24 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://detraveltask.com.pk"),
+  metadataBase: new URL("https://eliteonetravels.com"),
   title: `${config.businessName} — ${config.tagline}`,
   description: config.subTagline,
-  keywords: ["Tours in Pakistan", "De Travel Task", "De Travel Task PVT LTD", "Fairy Meadows", "Hunza Valley", "Skardu By Air", "Group Tours Pakistan", "Lahore Tours"],
+  keywords: [
+    "Elite One Travels",
+    "Elite One Travel Lahore",
+    "Travel Agency Lahore",
+    "International Holiday Packages Pakistan",
+    "Dubai Tour Package from Lahore",
+    "Thailand Tour Package Pakistan",
+    "Turkey Tour Package Lahore",
+    "Malaysia Holiday Package",
+    "Flight Booking Lahore",
+    "Hotel Booking Agency Pakistan",
+    "Mustafabad Lahore Travel Agency",
+    "Allama Iqbal Road Lahore Travel Agency",
+    "Group Tour Packages Pakistan"
+  ],
   icons: {
     icon: [
       { url: "/favicon.png", type: "image/png" },
@@ -37,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${config.businessName} — ${config.tagline}`,
     description: config.subTagline,
-    images: ["/images/real_fairy_meadows.jpg"],
+    images: ["/images/travel_hero.jpg"],
   }
 };
 

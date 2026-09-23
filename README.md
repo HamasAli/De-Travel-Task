@@ -1,36 +1,58 @@
-# Paradise Trips & Tours — Curated Pakistan Expeditions
+# 🏔️ Universal Tourism Website Starter Template
 
-A premier web application for **Paradise Trips & Tours**, showcasing curated northern expeditions, luxury family retreats, boutique by-air charters, and executive mountain adventures across Pakistan.
+A modern, high-performance, white-label **Tourism & Travel Web Platform** built with **Next.js 14 App Router**, **TypeScript**, and **Tailwind CSS**.
 
----
-
-## 🌟 Highlights
-- **Curated Expeditions**: Fairy Meadows, Hunza Valley, Skardu By Air, Kumrat Valley, and Swat.
-- **Bespoke Trip Builder**: Custom private tour planner with vehicle, hotel tier, and group configuration.
-- **Direct WhatsApp Concierge**: Instant booking and quotation system directly to WhatsApp hotline.
-- **Modern Clean Aesthetic**: Obsidian Slate (`#0F172A`) & Crisp Emerald (`#065F46`, `#10B981`) luxury palette.
-- **High-Performance Architecture**: Next.js 14 App Router, TypeScript, and Tailwind CSS.
+Designed to launch bespoke tourism websites in minutes via centralized data & theme engines.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Setup Instructions
 
-First, install dependencies:
+Detailed Urdu & English step-by-step instructions are available in [**`TEMPLATE_INSTRUCTIONS.md`**](./TEMPLATE_INSTRUCTIONS.md).
+
+### 🤖 1-Prompt Turnkey Setup with Antigravity AI
+When starting a new project from this template, simply paste this in your Antigravity chat:
+
+```text
+Naya tourism project configure karna hai:
+
+1. Company Name: [Company Name]
+2. Short Name: [Short Name]
+3. Phone & WhatsApp: [+92 300 XXXXXXX]
+4. Office Address: [Address]
+5. Social Links: (Instagram, Facebook)
+6. Logo: [Attach Logo Image]
+7. Color Palette: [Extract from logo / Choose: Emerald, Ocean, Sapphire, Imperial Gold]
+8. Reviews & Rating: 5.0 ★ (10 Reviews)
+
+Ye data apply kar ke rounded circular favicon generate karo aur dev server run kr do!
+```
+
+---
+
+## 🎨 Master Control Files
+
+- **`src/config.ts`**: Central store for company contact info, WhatsApp concierge links, social media, tour packages, pricing tiers (quad/triple/twin/couple), itineraries, highlights, FAQs, and reviews.
+- **`src/theme.config.ts`**: Dynamic design engine with 6 luxury color presets or custom HEX codes.
+- **`public/images/logo.png`**: Client brand logo.
+- **`public/favicon.png`**: Auto-generated circular favicon.
+
+---
+
+## 🛠️ Getting Started
+
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-Run the development server:
-```bash
+# 2. Run the development server
 npm run dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+# 3. Open in browser
+http://localhost:3000
+```
 
 ---
 
-## 📍 Contact & Office
-- **Head Office**: 59 A Commercial, Central Park, Lahore, Pakistan
-- **Hotline & WhatsApp**: +92 323 7266292
-- **Instagram**: [@paradise_trips_and_tours](https://www.instagram.com/paradise_trips_and_tours/)
-- **Facebook**: [Paradise Travel & Tours](https://www.facebook.com/paradisetravelandtours.official/)
+## 📄 License & Usage
+This repository is configured as a template for rapid travel & tour company web deployments.
